@@ -1,0 +1,27 @@
+<!--
+  Three exclusive states from the service. Each @if reads a pre-narrowed
+  computed signal so the template stays dumb.
+-->
+
+@if (cv.isLoading()) {
+  <cv-spinner />
+}
+
+@if (cv.isError()) {
+  <cv-error-banner
+    [message]="cv.errorMessage()"
+    (retry)="cv.load()"
+  />
+}
+
+@if (cv.data(); as data) {
+  <main class="cv-page">
+    <cv-header [data]="data.header" />
+    <cv-summary [text]="data.summary" />
+    <cv-selected-work [entries]="data.selectedWork" />
+    <cv-stack-map [rows]="data.stackMap" />
+    <cv-education [entries]="data.education" />
+    <cv-other [entries]="data.other" />
+    <cv-footer />
+  </main>
+}

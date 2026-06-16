@@ -1,0 +1,35 @@
+<header class="cv-header">
+  <div class="cv-header__photo">
+    <img [src]="data().photoUrl" alt="Brandon Scott" class="cv-photo" />
+  </div>
+  <div class="cv-header__text">
+    <h1 class="cv-name">{{ data().name }}</h1>
+    <p class="cv-tagline">{{ data().tagline }}</p>
+
+    <!--
+      Two contact lines as separate paragraphs. Each is a flex row with
+      wrap; chunks (email, phone, location) are no-break so the phone
+      number cannot split across lines on narrow screens.
+    -->
+    <p class="cv-contact">
+      <span class="cv-contact__chunk">{{ data().email }}</span>
+      <span class="cv-contact__sep" aria-hidden="true">·</span>
+      <span class="cv-contact__chunk">{{ data().phone }}</span>
+      <span class="cv-contact__sep" aria-hidden="true">·</span>
+      <span class="cv-contact__chunk">{{ data().location }}</span>
+    </p>
+
+    <p class="cv-contact">
+      @for (link of data().links; track link.label; let isLast = $last) {
+        @if (link.url) {
+          <a class="cv-contact__chunk" [href]="link.url" target="_blank" rel="noopener">{{ link.label }}</a>
+        } @else {
+          <span class="cv-contact__chunk">{{ link.label }}</span>
+        }
+        @if (!isLast) {
+          <span class="cv-contact__sep" aria-hidden="true">·</span>
+        }
+      }
+    </p>
+  </div>
+</header>

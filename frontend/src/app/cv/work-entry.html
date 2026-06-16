@@ -1,0 +1,29 @@
+<article class="cv-work">
+  <h3 class="cv-work__title">
+    <span [innerHTML]="entry().title"></span>
+    @if (entry().titleLink; as link) {
+      <a [href]="link.url" target="_blank" rel="noopener">· {{ link.label }}</a>
+    }
+  </h3>
+  <p class="cv-work__meta">{{ entry().meta }}</p>
+
+  @for (block of entry().blocks; track $index) {
+    @switch (block.type) {
+      @case ('paragraph') {
+        <p class="cv-work__block" [innerHTML]="block.html"></p>
+      }
+      @case ('punch') {
+        <p class="cv-work__block cv-work__block--punch" [innerHTML]="block.html"></p>
+      }
+      @case ('dashList') {
+        <ul class="cv-dash-list">
+          @for (item of block.items; track $index) {
+            <li [innerHTML]="item"></li>
+          }
+        </ul>
+      }
+    }
+  }
+
+  <p class="cv-work__scope" [innerHTML]="entry().scope"></p>
+</article>

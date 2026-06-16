@@ -1,0 +1,368 @@
+// =========================================================================
+// Design tokens — navy accent, clean sans-serif, generous whitespace.
+// =========================================================================
+:root {
+  // Colours
+  --color-text: #1a1a1a;
+  --color-text-muted: #555;
+  --color-text-faint: #777;
+  --color-accent: #15314a;
+  --color-accent-soft: #2c4d68;
+  --color-bg: #ffffff;
+  --color-bg-soft: #f7f8fa;
+  --color-rule: #d0d4d8;
+  --color-rule-soft: #e2e5e8;
+
+  // Typography
+  --font-sans: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --fs-body: 15px;
+  --fs-small: 13.5px;
+  --fs-tiny: 12.5px;
+  --fs-h1: 36px;
+  --fs-h2: 13px;
+  --fs-h3: 16px;
+  --lh-body: 1.55;
+  --lh-tight: 1.35;
+
+  // Spacing
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+
+  // Layout
+  --content-max: 920px;
+  --content-pad-x: 24px;
+}
+
+// =========================================================================
+// Reset / base
+// =========================================================================
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    border-bottom-color: var(--color-accent);
+  }
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+// =========================================================================
+// Page layout
+// =========================================================================
+.cv-page {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--sp-7) var(--content-pad-x) var(--sp-8);
+
+  @media (min-width: 768px) {
+    padding: var(--sp-8) var(--content-pad-x);
+  }
+}
+
+// =========================================================================
+// Section heading (used across all sections)
+// =========================================================================
+.cv-section {
+  margin-top: var(--sp-7);
+
+  &__heading {
+    font-size: var(--fs-h2);
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 0 0 var(--sp-3) 0;
+    padding-bottom: var(--sp-2);
+    border-bottom: 1px solid var(--color-rule);
+    font-weight: 600;
+  }
+}
+
+// =========================================================================
+// Header — photo on top, text below, all centred.
+// =========================================================================
+.cv-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--sp-4);
+  padding-bottom: var(--sp-4);
+  border-bottom: 1.5px solid var(--color-accent);
+
+  &__text {
+    width: 100%;
+    min-width: 0;
+  }
+
+  &__photo {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.cv-name {
+  font-size: var(--fs-h1);
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: -0.5px;
+  margin: 0;
+  line-height: 1.05;
+}
+
+.cv-tagline {
+  margin: var(--sp-2) 0 0 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+// Each contact line is a flex row with wrap; chunks stay together as
+// units (email, phone, location, links — none of them split mid-token).
+.cv-contact {
+  margin: var(--sp-2) 0 0 0;
+  font-size: var(--fs-small);
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: 0 var(--sp-2);
+
+  a {
+    color: var(--color-accent);
+  }
+}
+
+.cv-contact__chunk {
+  white-space: nowrap;
+}
+
+.cv-contact__sep {
+  color: var(--color-rule);
+}
+
+.cv-photo {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-accent);
+}
+
+// =========================================================================
+// Summary
+// =========================================================================
+.cv-summary {
+  margin-top: var(--sp-4);
+  text-align: justify;
+  hyphens: auto;
+}
+
+// =========================================================================
+// Work entries
+// =========================================================================
+.cv-work {
+  & + & {
+    margin-top: var(--sp-6);
+  }
+}
+
+.cv-work__title {
+  margin: 0;
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  color: var(--color-text);
+
+  a {
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--color-accent);
+    margin-left: var(--sp-2);
+  }
+}
+
+.cv-work__meta {
+  margin: var(--sp-1) 0 var(--sp-3) 0;
+  font-size: var(--fs-small);
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+.cv-work__block {
+  margin: var(--sp-3) 0;
+  text-align: justify;
+  hyphens: auto;
+
+  &--punch {
+    font-weight: 600;
+    color: var(--color-accent);
+    text-align: left;
+  }
+}
+
+.cv-dash-list {
+  margin: var(--sp-3) 0 var(--sp-3) var(--sp-4);
+  padding: 0;
+  list-style: none;
+
+  li {
+    margin: var(--sp-2) 0;
+    padding-left: var(--sp-4);
+    text-indent: -16px;
+    text-align: left;
+    line-height: var(--lh-body);
+
+    &::before {
+      content: '— ';
+      color: var(--color-accent);
+      font-weight: 600;
+    }
+  }
+}
+
+.cv-work__scope {
+  margin-top: var(--sp-3);
+  font-size: var(--fs-small);
+  color: var(--color-text-muted);
+  line-height: 1.55;
+  text-align: justify;
+
+  strong {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+}
+
+// =========================================================================
+// Stack map
+// =========================================================================
+.cv-stack {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--sp-3) 0;
+  font-size: var(--fs-small);
+
+  th,
+  td {
+    text-align: left;
+    padding: var(--sp-3) var(--sp-3) var(--sp-3) 0;
+    vertical-align: top;
+    border-bottom: 1px solid var(--color-rule-soft);
+  }
+
+  td.cv-stack__label {
+    width: 30%;
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  // Mobile: stack the cells
+  @media (max-width: 640px) {
+    th,
+    td {
+      display: block;
+      padding: var(--sp-1) 0;
+      border-bottom: none;
+    }
+
+    tr {
+      display: block;
+      padding: var(--sp-3) 0;
+      border-bottom: 1px solid var(--color-rule-soft);
+    }
+
+    td.cv-stack__label {
+      width: auto;
+      font-size: 14px;
+    }
+  }
+}
+
+// =========================================================================
+// Education + Other
+// =========================================================================
+.cv-education-line,
+.cv-other-line {
+  margin: var(--sp-2) 0;
+
+  strong {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+}
+
+// =========================================================================
+// Footer — centred, stacked.
+// =========================================================================
+.cv-footer {
+  margin-top: var(--sp-7);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--color-rule);
+  font-size: var(--fs-small);
+  color: var(--color-text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--sp-3);
+}
+
+.cv-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-3) var(--sp-4);
+}
+
+// =========================================================================
+// Print
+// =========================================================================
+@media print {
+  body {
+    font-size: 11pt;
+  }
+
+  .cv-footer,
+  .cv-photo {
+    // Adjust as needed
+  }
+
+  a {
+    color: var(--color-text);
+    border-bottom: none;
+  }
+}
