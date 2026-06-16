@@ -10,13 +10,10 @@
 
 name: CI
 
-# Opt all JavaScript-based actions (checkout, setup-dotnet, setup-node,
-# pnpm/action-setup) into the Node 24 runtime. Node 20 becomes the
-# fallback as of mid-2026 and disappears in September; this flag
-# silences the deprecation notice and future-proofs the workflow
-# without waiting for major-version bumps on each individual action.
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+# All actions pinned to majors that natively target the Node 24 runtime
+# (checkout@v6, setup-node@v5, setup-dotnet@v5, pnpm/action-setup@v6).
+# This removes the Node 20 deprecation warnings without needing the
+# FORCE_JAVASCRIPT_ACTIONS_TO_NODE24 compatibility flag.
 
 on:
   push:
@@ -32,13 +29,13 @@ jobs:
       run:
         working-directory: ./frontend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 10
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: pnpm
@@ -57,9 +54,9 @@ jobs:
       run:
         working-directory: ./backend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 8.0.x
 
