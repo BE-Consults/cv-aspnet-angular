@@ -1,0 +1,24 @@
+# Build artefacts — regenerated inside the image
+**/bin
+**/obj
+**/dist
+**/.angular
+frontend/node_modules
+
+# Local / editor
+**/.vs
+**/.vscode
+**/.idea
+**/.DS_Store
+**/Thumbs.db
+
+# Git, CI, docs — not needed at runtime
+.git
+.gitignore
+.github
+README.md
+
+# Local Docker / Fly state
+fly.toml
+Dockerfile
+.dockerignore

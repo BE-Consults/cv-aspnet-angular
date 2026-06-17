@@ -1,0 +1,53 @@
+# =========================================================================
+# Fly.io app configuration.
+#
+# DESIGN NOTES
+#
+# 1. Single deployable.
+#    One machine runs the ASP.NET Core app, which serves both the static
+#    Angular bundle from wwwroot/ and the /api/* endpoints. No CORS, no
+#    edge proxy, one URL.
+#
+# 2. Region: IAT.
+#    Closest available Fly region to the Caribbean.
+#
+# 3. Scale-to-zero.
+#    min_machines_running = 0 plus auto_stop_machines = "stop" lets the
+#    machine sleep when idle, then cold-start on the next request. Free
+#    tier friendly. Cold start adds a couple of seconds to the first
+#    request after idle; sub-100 ms thereafter. Acceptable for a
+#    portfolio site whose audience is one person per visit.
+#
+# 4. shared-cpu-1x / 256 MB.
+#    Smallest, free-tier-eligible Fly machine. ASP.NET Core minimal API
+#    serving a static bundle and a JSON document fits well below that.
+# =========================================================================
+
+app = "bscott-cv"
+primary_region = "iat"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [http_service.concurrency]
+    type = "connections"
+    hard_limit = 100
+    soft_limit = 80
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/api/health"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"

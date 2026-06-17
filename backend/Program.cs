@@ -25,6 +25,15 @@
 //
 // 4. CvSource as singleton.
 //    Content is immutable for process lifetime — see Data/CvSource.cs.
+//
+// 5. Serves the Angular bundle from wwwroot/.
+//    Production ships as a single image: ASP.NET serves the static
+//    Angular bundle plus the /api/* endpoints. UseDefaultFiles maps / to
+//    /index.html, UseStaticFiles serves anything under wwwroot/, and
+//    MapFallbackToFile lets the SPA handle client-side routes by
+//    returning index.html for any path that did not match an endpoint
+//    or static file. Order matters — static middleware must come before
+//    the endpoint mapping; the fallback must come after.
 // =========================================================================
 
 using System.Text.Json.Serialization;
@@ -55,6 +64,9 @@ builder.Services.AddSingleton<ICvSource, CvSource>();
 
 var app = builder.Build();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -69,5 +81,7 @@ app.MapGet("/api/cv", (ICvSource source) => source.Current)
 app.MapGet("/api/health", () => Results.Ok(new { status = "ok" }))
    .WithName("GetHealth")
    .WithOpenApi();
+
+app.MapFallbackToFile("index.html");
 
 app.Run();
