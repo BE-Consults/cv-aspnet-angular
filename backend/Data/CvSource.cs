@@ -55,7 +55,7 @@ public sealed class CvSource : ICvSource
                 new ContactLinkDto("chatcarib.ai", "https://chatcarib.ai"),
                 new ContactLinkDto("B&E Consulting (founder)"),
             },
-            PhotoUrl: "/profile.png"
+            PhotoUrl: "/profile.webp"
         ),
 
         Summary:
