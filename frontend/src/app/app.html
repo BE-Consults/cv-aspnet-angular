@@ -3,6 +3,8 @@
   computed signal so the template stays dumb.
 -->
 
+<a class="cv-skip-link" href="#main-content">Skip to main content</a>
+
 @if (cv.isLoading()) {
   <cv-spinner />
 }
@@ -15,13 +17,29 @@
 }
 
 @if (cv.data(); as data) {
-  <main class="cv-page">
+  <main id="main-content" class="cv-page" tabindex="-1">
+    <cv-source-pointer [meta]="META['header']" />
     <cv-header [data]="data.header" />
+
+    <cv-source-pointer [meta]="META['summary']" />
     <cv-summary [text]="data.summary" />
+
+    <cv-source-pointer [meta]="META['selectedWork']" />
     <cv-selected-work [entries]="data.selectedWork" />
+
+    <cv-source-pointer [meta]="META['stackMap']" />
     <cv-stack-map [rows]="data.stackMap" />
+
+    <cv-source-pointer [meta]="META['education']" />
     <cv-education [entries]="data.education" />
+
+    <cv-source-pointer [meta]="META['other']" />
     <cv-other [entries]="data.other" />
+
+    <cv-architecture-diagram />
+
     <cv-footer />
   </main>
 }
+
+<cv-inspect-toggle />

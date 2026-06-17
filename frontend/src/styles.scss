@@ -48,8 +48,11 @@
   box-sizing: border-box;
 }
 
-html {
+html, body {
   -webkit-text-size-adjust: 100%;
+  // Guarantee no horizontal scroll, regardless of injected SVG widths
+  // (Mermaid) or third-party content.
+  overflow-x: hidden;
 }
 
 body {
@@ -77,6 +80,52 @@ a {
 img {
   max-width: 100%;
   display: block;
+}
+
+// =========================================================================
+// Accessibility
+// =========================================================================
+
+// Skip link — invisible until a keyboard user tabs into it, then pops to
+// the top-left so they can jump straight to the main content.
+.cv-skip-link {
+  position: absolute;
+  top: -40px;
+  left: 8px;
+  background: var(--color-accent);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  z-index: 200;
+  transition: top 0.15s ease;
+
+  &:focus {
+    top: 8px;
+    border-bottom: none;
+  }
+}
+
+// Global visible-focus ring. Browsers' default focus-visible varies; this
+// guarantees a consistent 2px navy outline on every focusable element.
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+// Respect a user's reduced-motion preference. Strips animations and
+// transitions for vestibular-sensitive readers.
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 // =========================================================================

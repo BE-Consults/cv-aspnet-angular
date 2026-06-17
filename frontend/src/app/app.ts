@@ -19,6 +19,10 @@ import { StackMapComponent } from './cv/stack-map';
 import { EducationComponent } from './cv/education';
 import { OtherComponent } from './cv/other';
 import { FooterComponent } from './cv/footer';
+import { InspectToggleComponent } from './inspect/inspect-toggle';
+import { SourcePointerComponent } from './inspect/source-pointer';
+import { ArchitectureDiagramComponent } from './inspect/architecture-diagram';
+import { SOURCE_META } from './inspect/source-meta';
 
 @Component({
   selector: 'app-root',
@@ -33,12 +37,16 @@ import { FooterComponent } from './cv/footer';
     EducationComponent,
     OtherComponent,
     FooterComponent,
+    InspectToggleComponent,
+    SourcePointerComponent,
+    ArchitectureDiagramComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
   protected cv = inject(CvService);
+  protected readonly META = SOURCE_META;
 
   constructor() {
     this.cv.load();

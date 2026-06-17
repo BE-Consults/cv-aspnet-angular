@@ -31,6 +31,18 @@
             ],
             "styles": [
               "src/styles.scss"
+            ],
+            "allowedCommonJsDependencies": [
+              "dayjs",
+              "dayjs/plugin/advancedFormat.js",
+              "dayjs/plugin/customParseFormat.js",
+              "dayjs/plugin/duration.js",
+              "dayjs/plugin/isLeapYear.js",
+              "dayjs/plugin/isoWeek.js",
+              "dayjs/plugin/utc.js",
+              "dayjs/plugin/weekOfYear.js",
+              "dayjs/plugin/weekYear.js",
+              "cytoscape-cose-bilkent"
             ]
           },
           "configurations": {
