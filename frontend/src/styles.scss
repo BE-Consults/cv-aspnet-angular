@@ -1,3 +1,8 @@
+// Self-hosted Inter (variable). Removes the external Google Fonts request,
+// shaves the DNS/TCP/TLS round-trips off first paint, and lets the CSP
+// drop fonts.googleapis.com and fonts.gstatic.com.
+@use '@fontsource-variable/inter';
+
 // =========================================================================
 // Design tokens — navy accent, clean sans-serif, generous whitespace.
 // =========================================================================
