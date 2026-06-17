@@ -34,14 +34,48 @@
 //    returning index.html for any path that did not match an endpoint
 //    or static file. Order matters — static middleware must come before
 //    the endpoint mapping; the fallback must come after.
+//
+// 6. Hardening.
+//    The CV data is public by design, so confidentiality is not a
+//    concern. The remaining surface is availability and fingerprinting:
+//      - Per-IP rate limit on /api/cv (60 req/min, fixed window). Stops
+//        casual hammering of the endpoint from chewing through the
+//        Fly free-tier bandwidth.
+//      - Server: Kestrel response header off. Small reduction in stack
+//        fingerprinting.
+//      - HTTPS forced at the Fly edge; HSTS instructs browsers to lock
+//        the protocol in production.
+//      - CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy
+//        on every response. Frame-Ancestors 'none' replaces the legacy
+//        XFO header for browsers that support CSP Level 2.
+//      - Forwarded headers honoured so the rate-limit partition keys
+//        on the real client IP, not the Fly proxy IP.
 // =========================================================================
 
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
 using BScottCv.Data;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
 const string DevCorsPolicy = "AllowAngularDev";
+const string ApiRateLimit  = "api";
+
+// Strip the "Server: Kestrel" response header so the stack is not
+// advertised in every response.
+builder.WebHost.ConfigureKestrel(o => o.AddServerHeader = false);
+
+// Honour X-Forwarded-* from the Fly edge proxy so RemoteIpAddress
+// resolves to the real client IP — required for per-IP rate limiting.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 builder.Services.AddCors(options =>
 {
@@ -57,12 +91,56 @@ builder.Services.ConfigureHttpJsonOptions(options =>
         JsonIgnoreCondition.WhenWritingNull;
 });
 
+// 60 requests / minute per client IP. Fixed window; no queue — extra
+// requests get 429 immediately rather than backing up.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy(ApiRateLimit, context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit          = 60,
+                Window               = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit           = 0,
+            }));
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<ICvSource, CvSource>();
 
 var app = builder.Build();
+
+app.UseForwardedHeaders();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
+
+// Common security headers on every response.
+app.Use(async (context, next) =>
+{
+    var h = context.Response.Headers;
+    h["X-Content-Type-Options"] = "nosniff";
+    h["X-Frame-Options"]        = "DENY";
+    h["Referrer-Policy"]        = "strict-origin-when-cross-origin";
+    h["Content-Security-Policy"] =
+        "default-src 'self'; "
+      + "script-src 'self'; "
+      + "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+      + "font-src 'self' https://fonts.gstatic.com; "
+      + "img-src 'self' data:; "
+      + "connect-src 'self'; "
+      + "frame-ancestors 'none'";
+    await next();
+});
+
+app.UseRateLimiter();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
@@ -75,6 +153,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapGet("/api/cv", (ICvSource source) => source.Current)
+   .RequireRateLimiting(ApiRateLimit)
    .WithName("GetCv")
    .WithOpenApi();
 
